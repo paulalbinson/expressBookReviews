@@ -1,10 +1,13 @@
 # Express Book Reviews App Example
 
 This is a server-side online book review application that utilises a secure REST API server with 
-authentication at the session level using JWT. It was developed as a assessment submission for the 
+authentication at the session level using JWT. It was developed as an assessment submission for the 
 Developing Back-End Apps with Node.js and Express course within the IBM Full Stack Software Developer 
-Professional Certificate on Coursera. Building on an incomplete skeleton code.  
+Professional Certificate on Coursera. Building on an incomplete skeleton code, I developed this into 
+a full application as per the assessment requirements. 
 
+Task
+===
 Assuming the role of a back-end developer working for an online retailer selling books, the project 
 was to develop a server-side application that stores, retrieves, and manages book ratings and reviews.  
 
