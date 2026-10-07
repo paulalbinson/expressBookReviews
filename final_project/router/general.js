@@ -18,12 +18,12 @@ public_users.get('/', function (req, res) {
 // Get book details based on the ISBN specified in the ISBN parameter
 public_users.get('/isbn/:isbn', function (req, res) {
     // Retrieve the isbn parameter from the request URL and send the corresponding book's details
-    const isbn = req.params.isbn;   
+    const isbn = req.params.isbn;
 
     let book = books[isbn];
-    if (book){
+    if (book) {
         res.send(JSON.stringify(book, null, 4));
-    }else{
+    } else {
         res.send("No book found with this ISBN.")
     }
 });
@@ -31,7 +31,7 @@ public_users.get('/isbn/:isbn', function (req, res) {
 // Get book details based on the author specified in the author parameter
 public_users.get('/author/:author', function (req, res) {
     // Iterate through the books object to find books by the author specified in the author parameter      
-    const author = req.params.author;    
+    const author = req.params.author;
     let booksByAuthor = {};
 
     // 1. Obtain all the keys for the 'books' object
@@ -43,18 +43,18 @@ public_users.get('/author/:author', function (req, res) {
             booksByAuthor[key] = books[key]; // Copy the matching book over
         }
     });
-    
-    if (booksByAuthor){
+
+    if (booksByAuthor) {
         res.send(JSON.stringify(booksByAuthor, null, 4));
-    }else{
+    } else {
         res.send("No books found by the author specified.");
-    } 
+    }
 });
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
     // Iterate through the books object to find books with the title specified in the title parameter      
-    const title = req.params.title;    
+    const title = req.params.title;
     let booksByTitle = {};
 
     // 1. Obtain all the keys for the 'books' object
@@ -66,18 +66,34 @@ public_users.get('/title/:title', function (req, res) {
             booksByTitle[key] = books[key]; // Copy the matching book over
         }
     });
-    
-    if (booksByTitle){
+
+    if (booksByTitle) {
         res.send(JSON.stringify(booksByTitle, null, 4));
-    }else{
+    } else {
         res.send("No books found with the title specified.");
-    } 
+    }
 });
 
-//  Get book review
+//  Get book review identified by its ISBN as specified in the isbn parameter
 public_users.get('/review/:isbn', function (req, res) {
-    //Write your code here
-    return res.status(300).json({message: "Yet to be implemented"});
+    // Retrieve the isbn parameter from the request URL
+    const isbn = req.params.isbn;
+    
+    // Get the book that matches that ISBN
+    let book = books[isbn];
+    if (book) {
+        // Get the reviews for that book
+        let reviews = book.reviews;
+
+        // If the book has reviews send them else report no reviews found.
+        if (reviews) {
+            res.send(JSON.stringify(reviews, null, 4));
+        } else {
+            res.send("No reviews found for the book specified.");
+        }
+    } else {
+        res.send("No book found with this ISBN to get reviews for.");
+    }
 });
 
 module.exports.general = public_users;
