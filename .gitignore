@@ -128,4 +128,4 @@ nb-configuration.xml
 
 logs
 /app/log/
-/node_modules/
+/final_project/node_modules/
