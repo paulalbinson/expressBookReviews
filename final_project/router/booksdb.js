@@ -1,3 +1,5 @@
+/* Note each item book is identified by a number which is treated like an ISBN number but is just 
+ * one number for simplicity of this example app */
 let books = {
     1: {"author": "Chinua Achebe", "title": "Things Fall Apart", "reviews": {}},
     2: {"author": "Hans Christian Andersen", "title": "Fairy tales", "reviews": {}},

@@ -4,7 +4,6 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
 public_users.post("/register", (req, res) => {
     //Write your code here
     return res.status(300).json({message: "Yet to be implemented"});
@@ -18,8 +17,19 @@ public_users.get('/', function (req, res) {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', function (req, res) {
-    //Write your code here
-    return res.status(300).json({message: "Yet to be implemented"});
+    // Retrieve the isbn parameter from the request URL and send the corresponding book's details
+    const isbn = req.params.isbn;
+    
+    if (isbn){
+        let book = books[isbn];
+        if (book){
+            res.send(book);
+        }else{
+            res.send("No book found with this ISBN.")
+        }        
+    }else{
+        res.send("No ISBN Specified")
+    }
 });
 
 // Get book details based on author
