@@ -1,6 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const session = require('express-session')
+const session = require('express-session');
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
@@ -11,12 +11,19 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+    // Write the authentication mechanism here
 });
  
-const PORT =5000;
+const PORT = 3002;
 
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
-app.listen(PORT,()=>console.log("Server is running"));
+app.listen(PORT, () => {
+    console.log("Server is running");
+
+    // Tell PM2 this specific worker is fully booted and safe to handle traffic - Remove this if the app isn't managed by PM2
+    if (process.send) {
+        process.send('ready');
+    }
+});
