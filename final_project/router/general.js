@@ -53,8 +53,25 @@ public_users.get('/author/:author', function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
-    //Write your code here
-    return res.status(300).json({message: "Yet to be implemented"});
+    // Iterate through the books object to find books with the title specified in the title parameter      
+    const title = req.params.title;    
+    let booksByTitle = {};
+
+    // 1. Obtain all the keys for the 'books' object
+    let keys = Object.keys(books);
+
+    // 2. Iterate through the keys and check if the title matches
+    keys.forEach(key => {
+        if (books[key].title === title) {
+            booksByTitle[key] = books[key]; // Copy the matching book over
+        }
+    });
+    
+    if (booksByTitle){
+        res.send(JSON.stringify(booksByTitle, null, 4));
+    }else{
+        res.send("No books found with the title specified.");
+    } 
 });
 
 //  Get book review
