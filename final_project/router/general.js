@@ -22,7 +22,7 @@ public_users.get('/isbn/:isbn', function (req, res) {
 
     let book = books[isbn];
     if (book){
-        res.send(book);
+        res.send(JSON.stringify(book, null, 4));
     }else{
         res.send("No book found with this ISBN.")
     }
@@ -45,7 +45,7 @@ public_users.get('/author/:author', function (req, res) {
     });
     
     if (booksByAuthor){
-        res.send(booksByAuthor);
+        res.send(JSON.stringify(booksByAuthor, null, 4));
     }else{
         res.send("No books found by the author specified.");
     } 
