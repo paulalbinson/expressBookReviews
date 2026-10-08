@@ -10,12 +10,9 @@ const doesExist = (username) => {
     let usersWithSameName = users.filter((user) => {
         return user.username === username;
     });
+
     // Return true if any user with the same username is found, otherwise false
-    if (usersWithSameName.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return usersWithSameName.length > 0;
 }
 
 public_users.post("/register", (req, res) => {
@@ -47,8 +44,8 @@ public_users.get('/', function (req, res) {
 public_users.get('/isbn/:isbn', function (req, res) {
     // Retrieve the isbn parameter from the request URL and send the corresponding book's details
     const isbn = req.params.isbn;
-
     let book = books[isbn];
+
     if (book) {
         res.send(JSON.stringify(book, null, 4));
     } else {
@@ -68,7 +65,7 @@ public_users.get('/author/:author', function (req, res) {
     // 2. Iterate through the keys and check if the author matches
     keys.forEach(key => {
         if (books[key].author === author) {
-            booksByAuthor[key] = books[key]; // Copy the matching book over
+            booksByAuthor[key] = books[key]; // Copy the matching book(s) over to the array containing books by that author
         }
     });
 
@@ -91,7 +88,7 @@ public_users.get('/title/:title', function (req, res) {
     // 2. Iterate through the keys and check if the title matches
     keys.forEach(key => {
         if (books[key].title === title) {
-            booksByTitle[key] = books[key]; // Copy the matching book over
+            booksByTitle[key] = books[key]; // Copy the matching book over to the array containing books with that title
         }
     });
 
@@ -106,9 +103,10 @@ public_users.get('/title/:title', function (req, res) {
 public_users.get('/review/:isbn', function (req, res) {
     // Retrieve the isbn parameter from the request URL
     const isbn = req.params.isbn;
-    
+
     // Get the book that matches that ISBN
     let book = books[isbn];
+
     if (book) {
         // Get the reviews for that book
         let reviews = book.reviews;

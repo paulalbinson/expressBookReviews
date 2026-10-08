@@ -8,32 +8,26 @@ let users = [];
 // Check if username is valid
 const isValid = (username) => { //returns boolean
     // Filter the users array for any user with the same username
-    let validusers = users.filter((user) => {
+    let validUsers = users.filter((user) => {
         return (user.username === username);
     });
+
     // Return true if any valid user is found, otherwise false
-    if (validusers.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return validUsers.length > 0;
 }
 
 // Check if the user with the given username and password exists
 const authenticatedUser = (username, password) => {
     // Filter the users array for any user with the same username and password
-    let validusers = users.filter((user) => {
+    let validUsers = users.filter((user) => {
         return (user.username === username && user.password === password);
     });
+
     // Return true if any valid user is found, otherwise false
-    if (validusers.length > 0) {
-        return true;
-    } else {
-        return false;
-    }
+    return validUsers.length > 0;
 }
 
-//only registered users can login
+// Only registered users can login
 regd_users.post("/login", (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -54,7 +48,7 @@ regd_users.post("/login", (req, res) => {
         req.session.authorization = {
             accessToken, username
         }
-        console.log(req.session);
+
         return res.status(200).send("User successfully logged in");
     } else {
         return res.status(208).json({message: "Invalid Login. Check username and password"});
@@ -63,45 +57,40 @@ regd_users.post("/login", (req, res) => {
 
 // Add or update a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    console.log(req.session);
     const isbn = req.params.isbn; // Retrieve the isbn parameter from the request URL
-    const username = req.session.user; // Get the logged in user from the session
-    const review = req.body.review; // Get submitted review from body of request
+    const username = req.session.authorization.username; // Get the logged-in user from the session
+    const review = req.body.content; // Get submitted review from body of request
 
     // Check there is a review submitted to process
-    if (review) {
+    if (review.length > 0) {
         // Get the book that matches that ISBN
         let book = books[isbn];
+
         if (book) {
             // Get the reviews for that book
             let reviews = book.reviews;
 
-            // Filter existing reviews to those by the logged in user (if any).
-            let filteredReviews = reviews.filter((review) => review.user === username);
-            
-            let newReview = { "username": username, "content": review.content };
+            // Filter existing reviews to those by the logged-in user (if any).
+            let filteredReviews = reviews.filter((review) => review.username === username);
+
+            let newReview = {"username": username, "content": review}; // Create an object of the new or revised review
 
             // If there is an existing review for this book from the user update it, else add new review
-            if (filteredReviews.length > 0) { // Review exists - update it
-                // Select the first matching user and update attributes if provided
-                let filtered_review = filteredReviews[0];
-
-                filtered_review = newReview;
-
-                // Replace old review entry with updated review
+            if (filteredReviews.length > 0) { // Review exists - update it               
+                // Replace old review entry with updated review by filtering existing book reviews to exclude the one
+                // by the user and then add (via push) the new review to the reviews array
                 reviews = reviews.filter((review) => review.username !== username);
-                reviews.push(filtered_review);
-                
-                // Update book details in books object
+                reviews.push(newReview);
+
+                // Update the book's reviews in the books object to include the revised item
                 books[isbn].reviews = reviews;
 
                 // Send success message indicating the user has been updated
                 res.send("Review updated.");
-            } else { // No existing review - add one
-                
-                reviews.push(newReview);
-                
-                // Update book details in books object
+            } else { // No existing review of this book by the user - add one
+                reviews.push(newReview); // Add the new review to the reviews array
+
+                // Update the book's reviews in the books object to include the new item
                 books[isbn].reviews = reviews;
                 res.send("Review added");
             }
