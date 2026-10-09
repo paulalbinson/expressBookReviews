@@ -30,9 +30,9 @@ This involves:
 ## REST Endpoints
 The API is configured to run locally at `http://localhost:3002`. You may change this by modifying the PORT const variable.
 
-### Main Public Facing Endpoints (No Authentication Needed)
-These are defined in a genl_routes router (general.js) which is connected to the app router with a / prefix so 
-they are contained at the root of the site.
+### Main Public Facing Endpoints - general.js (No Authentication Needed)
+These are defined in a genl_routes router (general.js - routes a general user can access) which is connected to the app 
+router with a / prefix so they are contained at the root of the site.
 
 | Method | Endpoint          | Description                                                    | Login required |
 |--------|-------------------|----------------------------------------------------------------|----------------|
@@ -44,9 +44,10 @@ they are contained at the root of the site.
 | POST   | `/register`       | Register a user with a username and password.                  | No             |
 
 ### Authorised User Endpoints - auth_users.js  
-These are defined in a customer_routes router (auth_users) which is connected to the app router with 
-a /customer prefix, thus routes within this file/router begin /customer. Any route beginning /customer/auth/ is a 
-protected page requiring the user to be authenticated which is handled by middleware defined in index.js
+These are defined in a customer_routes router (auth_users.js - routes which an authorised user can access) which is 
+connected to the app router with a /customer prefix, thus routes within this file/router begin /customer. Any route 
+beginning /customer/auth/ is a protected page requiring the user to be authenticated which is handled by middleware 
+defined in index.js
 
 | Method | Endpoint                      | Description                                                                          | Login required |
 |--------|-------------------------------|--------------------------------------------------------------------------------------|----------------|
@@ -74,7 +75,7 @@ Send these as request bodies with the `Content-Type: application/json` header.
 
 ### Authentication
 Login stores a JWT in the server-side session. The client must retain the session cookie returned by the server and 
-include it in subsequent requests to protected endpoints. Unauthenticated requests to protected endpoints receive HTTP `403`.
+include it in subsequent requests to protected endpoints. Unauthenticated requests to protected endpoints receive HTTP `401`.
 
 Each user can have one review per book. A PUT request adds their review if none exists, or replaces their existing review.
 

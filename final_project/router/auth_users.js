@@ -34,7 +34,7 @@ regd_users.post("/login", (req, res) => {
 
     // Check if username or password is missing
     if (!username || !password) {
-        return res.status(404).json({message: "Error logging in"});
+        return res.status(400).json({message: "Error logging in - username or password missing."});
     }
 
     // Authenticate user
@@ -48,10 +48,9 @@ regd_users.post("/login", (req, res) => {
         req.session.authorization = {
             accessToken, username
         }
-
-        return res.status(200).send("User successfully logged in");
+        return res.status(200).json({message: "User successfully logged in"});
     } else {
-        return res.status(208).json({message: "Invalid Login. Check username and password"});
+        return res.status(401).json({message: "Invalid Login. Check username and password"});
     }
 });
 
@@ -62,7 +61,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const review = req.body.content; // Get submitted review from body of request
 
     // Check there is a review submitted to process
-    if (review.length > 0) {
+    if (typeof review == 'string' && review.trim().length !== 0) {
         // Get the book that matches that ISBN
         let book = books[isbn];
 
@@ -86,19 +85,22 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
                 books[isbn].reviews = reviews;
 
                 // Send success message indicating the user has been updated
-                res.send("Review updated.");
+                return res.status(200).json({message: "Review updated."});
             } else { // No existing review of this book by the user - add one
                 reviews.push(newReview); // Add the new review to the reviews array
 
                 // Update the book's reviews in the books object to include the new item
                 books[isbn].reviews = reviews;
-                res.send("Review added");
+                return res.status(201).json({message: "Review added."});
             }
         } else {
-            res.send("No book found with this ISBN to get reviews for.");
+            return res.status(200).json({
+                message: "No book found with the ISBN '" + isbn + "' to get reviews for.",
+                data: {}
+            });
         }
     } else {
-        res.send("No review submitted");
+        return res.status(400).json({message: "No review submitted"});
     }
 });
 

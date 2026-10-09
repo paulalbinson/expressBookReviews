@@ -25,19 +25,21 @@ public_users.post("/register", (req, res) => {
         if (!doesExist(username)) {
             // Add the new user to the users array
             users.push({"username": username, "password": password});
-            return res.status(200).json({message: "User successfully registered. Now you can login"});
+            return res.status(201).json({message: "User successfully registered. Now you can login"});
         } else {
-            return res.status(404).json({message: "User already exists!"});
+            return res.status(409).json({message: "Username already exists, please choose a different username!"});
         }
     }
     // Return error if username or password is missing
-    return res.status(404).json({message: "Unable to register user."});
+    return res.status(400).json({message: "Unable to register user - Username or password missing."});
 });
 
 // Get the book list available in the shop
 public_users.get('/', function (req, res) {
-    // Send JSON response with formatted books data
-    res.send(JSON.stringify(books, null, 4));
+    return res.status(200).json({
+        message: "Books retrieved successfully.",
+        data: books
+    });
 });
 
 // Get book details based on the ISBN specified in the ISBN parameter
@@ -47,9 +49,14 @@ public_users.get('/isbn/:isbn', function (req, res) {
     let book = books[isbn];
 
     if (book) {
-        res.send(JSON.stringify(book, null, 4));
+        return res.status(200).json({
+            message: "Book with ISBN of " + isbn + " retrieved successfully.",
+            data: book
+        });
     } else {
-        res.send("No book found with this ISBN.")
+        return res.status(404).json({
+            message: "No book found with the ISBN of " + isbn + "."
+        });
     }
 });
 
@@ -69,10 +76,16 @@ public_users.get('/author/:author', function (req, res) {
         }
     });
 
-    if (booksByAuthor) {
-        res.send(JSON.stringify(booksByAuthor, null, 4));
+    if (Object.keys(booksByAuthor).length > 0) {
+        return res.status(200).json({
+            message: "Book with author '" + author + "' retrieved successfully.",
+            data: booksByAuthor
+        });
     } else {
-        res.send("No books found by the author specified.");
+        return res.status(200).json({
+            message: "No books found by the author '" + author + "'.",
+            data: {}
+        });
     }
 });
 
@@ -92,10 +105,16 @@ public_users.get('/title/:title', function (req, res) {
         }
     });
 
-    if (booksByTitle) {
-        res.send(JSON.stringify(booksByTitle, null, 4));
+    if (Object.keys(booksByTitle).length > 0) {
+        return res.status(200).json({
+            message: "Book with title '" + title + "' retrieved successfully.",
+            data: booksByTitle
+        });
     } else {
-        res.send("No books found with the title specified.");
+        return res.status(200).json({
+            message: "No books found by with the title '" + title + "'.",
+            data: {}
+        });
     }
 });
 
@@ -112,13 +131,22 @@ public_users.get('/review/:isbn', function (req, res) {
         let reviews = book.reviews;
 
         // If the book has reviews send them else report no reviews found.
-        if (reviews) {
-            res.send(JSON.stringify(reviews, null, 4));
+        if (reviews.length > 0) {
+            return res.status(200).json({
+                message: "Reviews for the book with the ISBN of '" + isbn + "' retrieved successfully.",
+                data: reviews
+            });
         } else {
-            res.send("No reviews found for the book specified.");
+            return res.status(200).json({
+                message: "This book (ISBN '" + isbn + "') currently has no reviews.",
+                data: []
+            });
         }
     } else {
-        res.send("No book found with this ISBN to get reviews for.");
+        return res.status(200).json({
+            message: "No book found with the ISBN '" + isbn + "' to get reviews for.",
+            data: {}
+        });
     }
 });
 
