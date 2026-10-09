@@ -75,7 +75,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
             let newReview = {"username": username, "content": review}; // Create an object of the new or revised review
 
             // If there is an existing review for this book from the user update it, else add new review
-            if (filteredReviews.length > 0) { // Review exists - update it               
+            if (filteredReviews.length > 0) { // Review exists - update it
                 // Replace old review entry with updated review by filtering existing book reviews to exclude the one
                 // by the user and then add (via push) the new review to the reviews array
                 reviews = reviews.filter((review) => review.username !== username);
