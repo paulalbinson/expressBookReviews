@@ -49,10 +49,11 @@ connected to the app router with a /customer prefix, thus routes within this fil
 beginning /customer/auth/ is a protected page requiring the user to be authenticated which is handled by middleware 
 defined in index.js
 
-| Method | Endpoint                      | Description                                                                          | Login required |
-|--------|-------------------------------|--------------------------------------------------------------------------------------|----------------|
-| POST   | `/customer/login`             | Log in a registered user and establish an authenticated session.                     | No             |
-| PUT    | `/customer/auth/review/:isbn` | Add a review or replace the logged-in user's existing review for the specified book. | Yes            |
+| Method | Endpoint                      | Description                                                                           | Login required |
+|--------|-------------------------------|---------------------------------------------------------------------------------------|----------------|
+| POST   | `/customer/login`             | Log in a registered user and establish an authenticated session.                      | No             |
+| PUT    | `/customer/auth/review/:isbn` | Add a review or replace existing review of the logged-in user for the specified book. | Yes            |
+| DELETE | `/customer/auth/review/:isbn` | Delete the logged-in user's existing review for the specified book.                   | Yes            |
 
 Replace parameters such as `:isbn` with actual values. Author and title searches are case-sensitive; URL-encode 
 spaces and special characters.
@@ -65,7 +66,7 @@ Registration and login accept JSON:
       "password": "example-password"
     }
 
-Adding or updating a review accepts JSON:
+Adding or updating a review accepts JSON content of the review with the following format:
 
     {
       "content": "An engaging and enjoyable book."
@@ -91,4 +92,10 @@ the start command is configured with `nodemon index.js` so that node monitor con
 project files and restarts the server when anything changes. This is fine in a development environment but in a 
 production environment you are advised to change this to `node index.js` to remove this monitoring. Instead, restart on 
 demand, such as via a git hook when you push new code to the main branch.
+
+## Live Example
+You may test out this API via a live server at https://demos.paulalbinson.com/node-demos/express-book-reviews/ 
+appending the routes as needed. Thus, a direct GET call to this path gets the root endpoint that retrieves all books, 
+with https://demos.paulalbinson.com/node-demos/express-book-reviews/isbn/1 used to retrieve the book with the ISBN of 1, 
+and so on. Naturally adjust the HTTP method as necessary for the desired endpoint action as outlined in the tables above.   
 
