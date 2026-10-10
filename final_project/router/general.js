@@ -151,10 +151,6 @@ public_users.get('/review/:isbn', function (req, res) {
     }
 });
 
-public_users.get('/test-async-await', function (req, res) {
-    getListOfBooks();
-});
-
 // Get a list of books available in the bookshop with async-await
 async function getListOfBooks() {
     try {
