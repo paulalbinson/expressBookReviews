@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require('axios');
 
 // Check if a user with the given username already exists
 const doesExist = (username) => {
@@ -149,5 +150,23 @@ public_users.get('/review/:isbn', function (req, res) {
         });
     }
 });
+
+public_users.get('/test-async-await', function (req, res) {
+    getListOfBooks();
+});
+
+// Get a list of books available in the bookshop with async-await
+async function getListOfBooks() {
+    try {
+        const response = await axios.get(
+            "https://demos.paulalbinson.com/node-demos/express-book-reviews/"
+        );
+        console.log(response.data);
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+    } finally {
+        console.log("Request completed");
+    }
+}
 
 module.exports.general = public_users;
