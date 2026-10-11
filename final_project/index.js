@@ -39,6 +39,11 @@ const PORT = 3002;
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
+// This is used for if a URL is invalid (unknown endpoint). IMPORTANT: Keep after all recognised routes
+app.use((req, res) => {
+    res.status(404).json({ message: 'Unknown endpoint' });
+});
+
 app.listen(PORT, () => {
     console.log("Server is running");
 

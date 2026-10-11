@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
+let commonFunctions = require("../common_functions.js");
 const regd_users = express.Router();
 
 let users = [];
@@ -105,6 +106,18 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 // deletes the reviews based on the session username, so that a user can delete only their reviews and not others' users reviews.
 regd_users.delete("/auth/review/:isbn", (req, res) => {
     const isbn = req.params.isbn; // Retrieve the isbn parameter from the request URL
+
+    /* Check the ISBN looks valid.
+    As we're using a number to represent an ISBN number checking the input is a number is sufficient for now but were
+    we to use real ISBN numbers, this is not a suitable check as full ISBN validation is different: ISBN-10 can end in
+    X, and real ISBNs have length and checksum requirements. Create a proper ISBN checker function to use wherever
+    ISBN needs checking in that case. */
+    if (!commonFunctions.isNumeric(isbn)){
+        return res.status(400).json({
+            message: "The ISBN provided is invalid."
+        });
+    }
+
     const username = req.session.authorization.username; // Get the logged-in user from the session
 
     // Get the book that matches that ISBN

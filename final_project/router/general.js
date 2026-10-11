@@ -1,6 +1,6 @@
 const express = require('express');
 let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
+let commonFunctions = require("../common_functions.js");
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 const axios = require('axios');
@@ -47,6 +47,17 @@ public_users.get('/', function (req, res) {
 public_users.get('/isbn/:isbn', function (req, res) {
     // Retrieve the isbn parameter from the request URL and send the corresponding book's details
     const isbn = req.params.isbn;
+    /* Check the ISBN looks valid.
+    As we're using a number to represent an ISBN number checking the input is a number is sufficient for now but were
+    we to use real ISBN numbers, this is not a suitable check as full ISBN validation is different: ISBN-10 can end in
+    X, and real ISBNs have length and checksum requirements. Create a proper ISBN checker function to use wherever
+    ISBN needs checking in that case. */
+    if (!commonFunctions.isNumeric(isbn)){
+        return res.status(400).json({
+            message: "The ISBN provided is invalid."
+        });
+    }
+
     let book = books[isbn];
 
     if (book) {
@@ -151,13 +162,64 @@ public_users.get('/review/:isbn', function (req, res) {
     }
 });
 
+// Some demonstrations of how you could use the API with async functions and await calls. IMPORTANT: Change the URL to
+// match your server rather than my demonstration server instance.
+
 // Get a list of books available in the bookshop with async-await
 async function getListOfBooks() {
     try {
         const response = await axios.get(
             "https://demos.paulalbinson.com/node-demos/express-book-reviews/"
         );
-        console.log(response.data);
+        console.log(JSON.stringify(response.data, null, 4));
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+        /* Note: the error returned by axios is too detailed for outputting directly to the user, containing full debug
+        details (file paths, line numbers, etc.), so keep it only for internal debugging. When you wish to use the error
+        for output to the user, you should use a specific aspect of it that contains the error data returned, not the
+        full debug details. In this instance, you'd want to access error.response.data, which is the JSON body returned
+        by the API in the axios response. If you need a specific aspect of the JSON body, such as the message returned,
+        target that property, e.g., error.response.data.message */
+    } finally {
+        console.log("Request completed");
+    }
+}
+
+// Get book details based on ISBN with async-await
+async function getBookByISBN(isbn) {
+    try {
+        const response = await axios.get(
+            `https://demos.paulalbinson.com/node-demos/express-book-reviews/isbn/${isbn}`
+        );
+        console.log(JSON.stringify(response.data, null, 4));
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+    } finally {
+        console.log("Request completed");
+    }
+}
+
+// Get book details based on author with async-await
+async function getBookByAuthor(author) {
+    try {
+        const response = await axios.get(
+            `https://demos.paulalbinson.com/node-demos/express-book-reviews/author/${author}`
+        );
+        console.log(JSON.stringify(response.data, null, 4));
+    } catch (error) {
+        console.error("Error fetching data: ", error);
+    } finally {
+        console.log("Request completed");
+    }
+}
+
+// Get book details based on title with async-await
+async function getBookByTitle(title) {
+    try {
+        const response = await axios.get(
+            `https://demos.paulalbinson.com/node-demos/express-book-reviews/title/${title}`
+        );
+        console.log(JSON.stringify(response.data, null, 4));
     } catch (error) {
         console.error("Error fetching data: ", error);
     } finally {
